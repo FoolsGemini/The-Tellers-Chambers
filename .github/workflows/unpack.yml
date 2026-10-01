@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Open the chamber
-        run: unzip -o tellers_chambers.zip
+        run: unzip -o gj1anm.zip
       - name: Save the opened files
         run: |
           git config user.name "FoolsGemini"
