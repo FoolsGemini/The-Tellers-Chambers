@@ -1,0 +1,19 @@
+name: Unpack
+on:
+workflow_dispatch:
+jobs:
+unpack:
+runs-on: ubuntu-latest
+permissions:
+contents: write
+steps:
+- uses: actions/checkout@v4
+- name: Open the chamber
+run: unzip -o tellers_chambers.zip
+- name: Save the opened files
+run: |
+git config user.name "FoolsGemini"
+git config user.email "335790557+FoolsGemini@users.noreply.github.com"
+git add -A
+git commit -m "Open the chamber" || exit 0
+git push
