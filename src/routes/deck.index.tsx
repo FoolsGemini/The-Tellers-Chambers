@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import { DeckPicker } from "@/components/tarot/DeckPicker";
 import { TarotCard } from "@/components/tarot/TarotCard";
 import { CARDS, SUITS, suitLabel } from "@/lib/tarot/deck";
+import { getDeck, useDeckChoice } from "@/lib/tarot/deck-choice";
 import { cn } from "@/lib/utils";
 import type { Suit } from "@/lib/tarot/types";
 
@@ -10,6 +12,7 @@ export const Route = createFileRoute("/deck/")({ component: DeckPage });
 type Filter = "all" | "major" | Suit;
 
 function DeckPage() {
+  const deck = getDeck(useDeckChoice((s) => s.deckId));
   const [filter, setFilter] = useState<Filter>("all");
   const cards = useMemo(() => {
     if (filter === "all") return CARDS;
@@ -25,12 +28,11 @@ function DeckPage() {
 
   return (
     <main className="pb-16">
-      <header className="mx-auto max-w-xl text-center">
-        <p className="text-xs tracking-[0.18em] text-muted uppercase">The book of the deck</p>
+      <DeckPicker />
+      <header className="mx-auto mt-10 max-w-xl text-center">
+        <p className="text-xs tracking-[0.18em] text-muted uppercase">{deck.name}</p>
         <h1 className="font-display mt-2 text-4xl font-semibold tracking-tight">Seventy-eight.</h1>
-        <p className="mt-3 text-muted">
-          Seventy-eight paintings. Majors and minors in the same earth pigment — wands, cups, swords, and coins.
-        </p>
+        <p className="mt-3 text-muted">{deck.line}</p>
       </header>
 
       <div className="mt-8 flex flex-wrap gap-2">

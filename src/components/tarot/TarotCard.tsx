@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { suitArt } from "@/lib/tarot/deck";
+import { faceFor } from "@/lib/tarot/deck-art";
+import { useDeckChoice } from "@/lib/tarot/deck-choice";
 import { PIP_LAYOUTS } from "@/lib/tarot/pips";
 import type { TarotCard as CardData } from "@/lib/tarot/types";
 
@@ -32,21 +34,18 @@ export function TarotCard({
   onClick,
   label,
 }: Props) {
+  const deckId = useDeckChoice((s) => s.deckId);
+  const face = faceFor(deckId, card);
   const clickable = Boolean(onClick) || interactive;
 
   const body = (
     <div className={cn("card-flip relative h-full w-full", faceUp && "is-up")}>
       <div className="card-face card-face-back absolute inset-0 overflow-hidden rounded-[10px] border border-accent/25 shadow-[0_12px_32px_rgba(0,0,0,0.45)]">
-        <img
-          src="/cards/back.jpg"
-          alt=""
-          className="h-full w-full object-cover"
-          draggable={false}
-        />
+        <img src={face.back} alt="" className="h-full w-full object-cover" draggable={false} />
       </div>
       <div className="card-face card-face-front absolute inset-0 overflow-hidden rounded-[10px] border border-parchment-ink/20 bg-parchment shadow-[0_12px_32px_rgba(0,0,0,0.45)]">
         <div className={cn("h-full w-full", reversed && "rotate-180")}>
-          <CardFace card={card} />
+          <CardFace card={card} face={face} />
         </div>
         {reversed && faceUp ? (
           <span className="absolute top-1.5 left-1/2 z-10 -translate-x-1/2 rounded-full bg-parchment-ink/80 px-1.5 py-0.5 font-sans text-[9px] tracking-wide text-parchment uppercase">
@@ -97,16 +96,34 @@ export function TarotCard({
   );
 }
 
-function CardFace({ card }: { card: CardData }) {
-  if (card.art) {
+function CardFace({
+  card,
+  face,
+}: {
+  card: CardData;
+  face: ReturnType<typeof faceFor>;
+}) {
+  const [broken, setBroken] = useState(false);
+  const src = broken ? (card.art ?? null) : face.src;
+
+  if (face.mode !== "pip" && src) {
     return (
       <div className="relative h-full w-full">
         <img
-          src={card.art}
+          src={src}
           alt=""
           className="h-full w-full object-cover"
           draggable={false}
+          onError={() => setBroken(true)}
         />
+        {face.mode === "court" && face.emblem ? (
+          <img
+            src={face.emblem}
+            alt=""
+            className="absolute top-1.5 right-1.5 size-7 rounded-full border border-parchment/40 object-cover shadow"
+            draggable={false}
+          />
+        ) : null}
         <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-parchment-ink/80 to-transparent px-1.5 pt-8 pb-1.5">
           <p className="font-display text-center text-[0.7rem] leading-tight font-semibold text-parchment sm:text-xs">
             {card.name}
@@ -116,52 +133,24 @@ function CardFace({ card }: { card: CardData }) {
     );
   }
 
-  if (card.arcana === "major") {
-    return (
-      <div className="flex h-full flex-col items-center justify-between px-2 py-3">
-        <CornerFrame />
-        <p className="font-display text-3xl leading-none text-parchment-ink sm:text-4xl">
-          {card.roman}
-        </p>
-        <div className="text-center">
-          <p className="font-display text-[0.8rem] leading-tight font-semibold text-parchment-ink sm:text-sm">
-            {card.name}
-          </p>
-          <p className="mt-1 font-sans text-[9px] tracking-wide text-parchment-muted uppercase">
-            {card.epithet}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (card.rank && ["page", "knight", "queen", "king"].includes(card.rank) && card.suit) {
-    return (
-      <div className="relative flex h-full flex-col">
-        <img
-          src={suitArt(card.suit)}
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover opacity-90"
-          draggable={false}
-        />
-        <div className="absolute inset-0 bg-parchment/25" />
-        <div className="relative mt-auto bg-parchment-ink/75 px-1.5 py-2 text-center">
-          <p className="font-display text-[0.8rem] leading-tight font-semibold text-parchment">
-            {card.name}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (card.pip && card.suit) {
+  if (face.mode === "pip" && face.emblem && card.pip) {
     const layout = PIP_LAYOUTS[card.pip] ?? PIP_LAYOUTS[1]!;
-    const emblem = suitArt(card.suit);
     const pipSize = card.pip <= 3 ? 38 : card.pip <= 6 ? 28 : 22;
+    const ink = face.ground === "ink";
     return (
-      <div className="relative h-full w-full">
-        <CornerFrame />
-        <p className="absolute top-1.5 left-0 w-full text-center font-display text-[0.65rem] tracking-wide text-parchment-ink uppercase">
+      <div className={cn("relative h-full w-full", ink ? "bg-[#100e0c]" : "bg-[#f3ead7]")}>
+        <span
+          className={cn(
+            "pointer-events-none absolute inset-1.5 rounded-[6px] border",
+            ink ? "border-amber-200/30" : "border-parchment-ink/25",
+          )}
+        />
+        <p
+          className={cn(
+            "absolute top-1.5 left-0 w-full text-center font-display text-[0.65rem] tracking-wide uppercase",
+            ink ? "text-amber-100" : "text-parchment-ink",
+          )}
+        >
           {card.name}
         </p>
         {layout.map((p, i) => (
@@ -176,10 +165,16 @@ function CardFace({ card }: { card: CardData }) {
               transform: `translate(-50%, -50%)${p.flip ? " rotate(180deg)" : ""}`,
             }}
           >
-            <img src={emblem} alt="" className="h-full w-full object-cover" draggable={false} />
+            <img src={face.emblem!} alt="" className="h-full w-full object-cover" draggable={false} />
           </span>
         ))}
       </div>
+    );
+  }
+
+  if (card.art) {
+    return (
+      <img src={card.art} alt="" className="h-full w-full object-cover" draggable={false} />
     );
   }
 
@@ -187,14 +182,5 @@ function CardFace({ card }: { card: CardData }) {
     <div className="flex h-full items-center justify-center p-3 text-center">
       <p className="font-display text-sm text-parchment-ink">{card.name}</p>
     </div>
-  );
-}
-
-function CornerFrame() {
-  return (
-    <>
-      <span className="pointer-events-none absolute inset-1.5 rounded-[6px] border border-parchment-ink/20" />
-      <span className="pointer-events-none absolute inset-2.5 rounded-[4px] border border-parchment-ink/10" />
-    </>
   );
 }
