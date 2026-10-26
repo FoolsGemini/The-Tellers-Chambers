@@ -1,9 +1,17 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Paywall } from "@/components/pass/Paywall";
+import { riteIsFree } from "@/lib/pass/offer";
+import { usePass } from "@/lib/pass/use-pass";
 import { RITE_LIST } from "@/lib/rites/catalog";
 
 export const Route = createFileRoute("/rites/")({ component: Rites });
 
 function Rites() {
+  const pass = usePass();
+  const [ask, setAsk] = useState(false);
+  const locked = pass.ready && !pass.open;
+
   return (
     <main className="stagger-in pb-16">
       <section className="mx-auto max-w-xl text-center">
@@ -17,12 +25,10 @@ function Rites() {
         </p>
       </section>
       <ul className="mt-10 divide-y divide-border overflow-hidden rounded-(--radius-xl) border border-border bg-surface">
-        {RITE_LIST.map((rite) => (
-          <li key={rite.to}>
-            <Link
-              to={rite.to}
-              className="flex items-start gap-4 px-3 py-3.5 transition-colors duration-150 hover:bg-surface-2 sm:px-4"
-            >
+        {RITE_LIST.map((rite) => {
+          const held = locked && !riteIsFree(rite.to);
+          const row = (
+            <>
               <img
                 src={rite.image}
                 alt=""
@@ -30,13 +36,34 @@ function Rites() {
               />
               <div className="min-w-0">
                 <p className="font-display text-lg font-semibold text-fg">{rite.name}</p>
-                <p className="text-sm text-muted">{rite.subtitle}</p>
+                <p className="text-sm text-muted">{held ? "Locked · $9.99" : rite.subtitle}</p>
                 <p className="mt-1 text-sm text-subtle">{rite.description}</p>
               </div>
-            </Link>
-          </li>
-        ))}
+            </>
+          );
+          return (
+            <li key={rite.to}>
+              {held ? (
+                <button
+                  type="button"
+                  onClick={() => setAsk(true)}
+                  className="flex w-full items-start gap-4 px-3 py-3.5 text-left opacity-80 transition-colors duration-150 hover:bg-surface-2 sm:px-4"
+                >
+                  {row}
+                </button>
+              ) : (
+                <Link
+                  to={rite.to}
+                  className="flex items-start gap-4 px-3 py-3.5 transition-colors duration-150 hover:bg-surface-2 sm:px-4"
+                >
+                  {row}
+                </Link>
+              )}
+            </li>
+          );
+        })}
       </ul>
+      {ask ? <Paywall /> : null}
     </main>
   );
 }

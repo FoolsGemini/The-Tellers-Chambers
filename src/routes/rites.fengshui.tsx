@@ -1,3 +1,4 @@
+import { PassGate } from "@/components/pass/Paywall";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { BAGUA, type Direction } from "@/lib/rites/calendar";
@@ -34,6 +35,7 @@ function FengShuiRite() {
   ];
 
   return (
+    <PassGate>
     <main className="stagger-in pb-16">
       <Link to="/rites" className="inline-flex h-11 items-center text-sm text-muted hover:text-fg">
         All rites
@@ -165,5 +167,6 @@ function FengShuiRite() {
         </ul>
       </section>
     </main>
+    </PassGate>
   );
 }

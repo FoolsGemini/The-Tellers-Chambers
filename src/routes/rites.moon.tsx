@@ -1,3 +1,4 @@
+import { PassGate } from "@/components/pass/Paywall";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { MoonDisc } from "@/components/rites/MoonDisc";
@@ -17,6 +18,7 @@ function MoonRite() {
   const label = cursor.toLocaleDateString(undefined, { month: "long", year: "numeric" });
 
   return (
+    <PassGate>
     <main className="stagger-in pb-16">
       <Link to="/rites" className="inline-flex h-11 items-center text-sm text-muted hover:text-fg">
         All rites
@@ -105,6 +107,7 @@ function MoonRite() {
         </p>
       </section>
     </main>
+    </PassGate>
   );
 }
 

@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { usePass } from "@/lib/pass/use-pass";
 import { useEffect, useMemo, useState } from "react";
 import { TarotCard } from "@/components/tarot/TarotCard";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import type { SavedReading } from "@/lib/tarot/types";
 export const Route = createFileRoute("/chamber")({ component: Chamber });
 
 function Chamber() {
+  const pass = usePass();
   const daily = useMemo(() => cardOfTheDay(), []);
   const [open, setOpen] = useState(false);
   const [recent, setRecent] = useState<SavedReading[]>([]);
@@ -91,7 +93,7 @@ function Chamber() {
         </ul>
       </section>
 
-      {recent.length > 0 ? (
+      {pass.open && recent.length > 0 ? (
         <section className="mt-14">
           <div className="mb-4 text-center">
             <h2 className="font-display text-2xl font-semibold">Recent sittings</h2>

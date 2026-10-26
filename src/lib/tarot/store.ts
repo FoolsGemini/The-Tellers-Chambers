@@ -76,6 +76,11 @@ export const useReadingStore = create<ReadingStore>()(
       setInterpretation: (interpretation) => set({ interpretation }),
       setInterpreting: (interpreting) => set({ interpreting }),
       persistNow: (text?: string | null) => {
+        try {
+          if (sessionStorage.getItem("veil.pass.open") === "0") return;
+        } catch {
+          /* private mode still keeps a sitting */
+        }
         const { spreadId, question, draws, interpretation, savedId } = get();
         if (!spreadId) return;
         const spread = getSpread(spreadId);

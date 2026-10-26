@@ -13,7 +13,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ChamberRouteImport } from './routes/chamber'
 import { Route as DeckRouteImport } from './routes/deck'
 import { Route as JournalRouteImport } from './routes/journal'
+import { Route as PassRouteImport } from './routes/pass'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RitesRouteImport } from './routes/rites'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as DeckIndexRouteImport } from './routes/deck.index'
 import { Route as DeckCardIdRouteImport } from './routes/deck.$cardId'
 import { Route as ReadSpreadIdRouteImport } from './routes/read.$spreadId'
@@ -45,9 +48,24 @@ const JournalRoute = JournalRouteImport.update({
   path: '/journal',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PassRoute = PassRouteImport.update({
+  id: '/pass',
+  path: '/pass',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RitesRoute = RitesRouteImport.update({
   id: '/rites',
   path: '/rites',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DeckIndexRoute = DeckIndexRouteImport.update({
@@ -106,7 +124,10 @@ export interface FileRoutesByFullPath {
   '/chamber': typeof ChamberRoute
   '/deck': typeof DeckRouteWithChildren
   '/journal': typeof JournalRoute
+  '/pass': typeof PassRoute
+  '/privacy': typeof PrivacyRoute
   '/rites': typeof RitesRouteWithChildren
+  '/terms': typeof TermsRoute
   '/deck/$cardId': typeof DeckCardIdRoute
   '/read/$spreadId': typeof ReadSpreadIdRoute
   '/rites/bibliomancy': typeof RitesBibliomancyRoute
@@ -122,6 +143,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/chamber': typeof ChamberRoute
   '/journal': typeof JournalRoute
+  '/pass': typeof PassRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/deck/$cardId': typeof DeckCardIdRoute
   '/read/$spreadId': typeof ReadSpreadIdRoute
   '/rites/bibliomancy': typeof RitesBibliomancyRoute
@@ -139,7 +163,10 @@ export interface FileRoutesById {
   '/chamber': typeof ChamberRoute
   '/deck': typeof DeckRouteWithChildren
   '/journal': typeof JournalRoute
+  '/pass': typeof PassRoute
+  '/privacy': typeof PrivacyRoute
   '/rites': typeof RitesRouteWithChildren
+  '/terms': typeof TermsRoute
   '/deck/$cardId': typeof DeckCardIdRoute
   '/read/$spreadId': typeof ReadSpreadIdRoute
   '/rites/bibliomancy': typeof RitesBibliomancyRoute
@@ -158,7 +185,10 @@ export interface FileRouteTypes {
     | '/chamber'
     | '/deck'
     | '/journal'
+    | '/pass'
+    | '/privacy'
     | '/rites'
+    | '/terms'
     | '/deck/$cardId'
     | '/read/$spreadId'
     | '/rites/bibliomancy'
@@ -174,6 +204,9 @@ export interface FileRouteTypes {
     | '/'
     | '/chamber'
     | '/journal'
+    | '/pass'
+    | '/privacy'
+    | '/terms'
     | '/deck/$cardId'
     | '/read/$spreadId'
     | '/rites/bibliomancy'
@@ -190,7 +223,10 @@ export interface FileRouteTypes {
     | '/chamber'
     | '/deck'
     | '/journal'
+    | '/pass'
+    | '/privacy'
     | '/rites'
+    | '/terms'
     | '/deck/$cardId'
     | '/read/$spreadId'
     | '/rites/bibliomancy'
@@ -208,7 +244,10 @@ export interface RootRouteChildren {
   ChamberRoute: typeof ChamberRoute
   DeckRoute: typeof DeckRouteWithChildren
   JournalRoute: typeof JournalRoute
+  PassRoute: typeof PassRoute
+  PrivacyRoute: typeof PrivacyRoute
   RitesRoute: typeof RitesRouteWithChildren
+  TermsRoute: typeof TermsRoute
   ReadSpreadIdRoute: typeof ReadSpreadIdRoute
 }
 
@@ -242,11 +281,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JournalRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pass': {
+      id: '/pass'
+      path: '/pass'
+      fullPath: '/pass'
+      preLoaderRoute: typeof PassRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/rites': {
       id: '/rites'
       path: '/rites'
       fullPath: '/rites'
       preLoaderRoute: typeof RitesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/deck/': {
@@ -361,7 +421,10 @@ const rootRouteChildren: RootRouteChildren = {
   ChamberRoute: ChamberRoute,
   DeckRoute: DeckRouteWithChildren,
   JournalRoute: JournalRoute,
+  PassRoute: PassRoute,
+  PrivacyRoute: PrivacyRoute,
   RitesRoute: RitesRouteWithChildren,
+  TermsRoute: TermsRoute,
   ReadSpreadIdRoute: ReadSpreadIdRoute,
 }
 export const routeTree = rootRouteImport

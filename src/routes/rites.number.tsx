@@ -1,3 +1,4 @@
+import { PassGate } from "@/components/pass/Paywall";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { luckyNumber } from "@/lib/rites/number";
@@ -17,6 +18,7 @@ function NumberRite() {
   );
 
   return (
+    <PassGate>
     <main className="stagger-in pb-16">
       <Link to="/rites" className="inline-flex h-11 items-center text-sm text-muted hover:text-fg">
         All rites
@@ -38,5 +40,6 @@ function NumberRite() {
         </div>
       </section>
     </main>
+    </PassGate>
   );
 }

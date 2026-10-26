@@ -1,3 +1,4 @@
+import { PassGate } from "@/components/pass/Paywall";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,7 @@ function BibliomancyRite() {
   }
 
   return (
+    <PassGate>
     <main className="stagger-in pb-16">
       <Link to="/rites" className="inline-flex h-11 items-center text-sm text-muted hover:text-fg">
         All rites
@@ -119,5 +121,6 @@ function BibliomancyRite() {
         </section>
       ) : null}
     </main>
+    </PassGate>
   );
 }

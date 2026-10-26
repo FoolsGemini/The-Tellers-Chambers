@@ -1,5 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { PassGate } from "@/components/pass/Paywall";
 import { TarotCard } from "@/components/tarot/TarotCard";
 import { Button } from "@/components/ui/button";
 import { getCard } from "@/lib/tarot/deck";
@@ -24,6 +25,7 @@ function JournalPage() {
   }, []);
 
   return (
+    <PassGate>
     <main className="pb-16">
       <header className="mx-auto max-w-xl text-center">
         <p className="text-xs tracking-[0.18em] text-muted uppercase">Kept on this device</p>
@@ -124,5 +126,6 @@ function JournalPage() {
         </div>
       )}
     </main>
+    </PassGate>
   );
 }

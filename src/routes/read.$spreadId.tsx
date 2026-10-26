@@ -1,5 +1,8 @@
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { Paywall } from "@/components/pass/Paywall";
+import { spreadIsFree } from "@/lib/pass/offer";
+import { usePass } from "@/lib/pass/use-pass";
 import { MeaningPanel } from "@/components/tarot/MeaningPanel";
 import { SpreadBoard } from "@/components/tarot/SpreadBoard";
 import { TarotCard } from "@/components/tarot/TarotCard";
@@ -15,6 +18,7 @@ export const Route = createFileRoute("/read/$spreadId")({
 });
 
 function ReadingPage() {
+  const pass = usePass();
   const { spreadId } = Route.useParams();
   const spread = getSpread(spreadId);
   const hydrate = useReadingStore((s) => s.hydrate);
@@ -49,6 +53,13 @@ function ReadingPage() {
   const stackCards = useMemo(() => CARDS.slice(0, 5), []);
 
   if (!spread) return <Navigate to="/chamber" />;
+  if (pass.ready && !pass.open && !spreadIsFree(spread.id)) {
+    return (
+      <main className="pb-16">
+        <Paywall />
+      </main>
+    );
+  }
 
   async function onInterpret() {
     if (!spread) return;
